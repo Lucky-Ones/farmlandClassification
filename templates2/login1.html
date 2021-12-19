@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>数据集</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <style>
+body{
+    margin: 0;
+    padding: 0;
+    background: url("../static/image/bg.jpg");
+    font-family: sans-serif;
+    background-size: cover;
+}
+.box{
+    position: absolute;
+    top:50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 400px;
+    padding: 40px;
+    background: rgba(0,0,0,.8);
+    box-sizing: border-box;
+    box-shadow: 0 15px 25px rgba(0,0,0,.5);
+    border-radius: 10px;
+
+}
+.box h2{
+    margin: 0 0 30px;
+    padding: 0;
+    color: #fff;
+    text-align: center;
+}
+.box .inputBox{
+    position: relative;
+}
+.box .inputBox input{
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #fff;
+    outline: none;
+    background: transparent;
+
+}
+.box .inputBox label{
+    position: absolute;
+    top:0;
+    left: 0;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #fff;
+    pointer-events: none;
+    transition: .5s;
+}
+.box .inputBox input:focus ~ label,
+.box .inputBox input:valid ~label{
+    top:-18px;
+    left: 0;
+    color: #03a9f4;
+    font-size: 12px;
+}
+.box input[type='submit']{
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #03a9f4;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    top: 50%;
+    left: 50%;
+
+}
+        *{
+            padding: 0;
+            margin: 0;
+        }
+
+        li{
+            list-style: none;
+        }
+
+        .box1{
+            width: 100%;
+            height: 48px;
+            margin: 0 auto;
+            background-color: #E8E7E3;
+        }
+
+        .nav{
+            width: 700px;
+            height: 48px;
+            float: right;
+            background-color: #E8E7E3;
+        }
+
+        li{
+            float: left;
+            line-height: 48px;
+
+        }
+
+        .nav a{
+            display: block;
+            text-decoration: none;
+            color: #777;
+            font-size: 18px;
+            padding: 0 10px;
+        }
+
+        .nav a:hover{
+            background-color: #3f3f3f;
+            color: #E8E7E3;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- 创建导航条结构 -->
+    <header class="box1">
+    <ul class="nav">
+        <li>
+<!--            <a href="http://127.0.0.1:5500/RemoClass/index.html">主页</a>-->
+            <a href="http://122.9.81.200/index">主页</a>
+        </li>
+        <li>
+            <a href="http://122.9.81.200/data">数据集</a>
+        </li>
+        <li>
+            <a href="http://122.9.81.200/forecast">模型在线预测</a>
+        </li>
+        <li>
+            <a href="http://122.9.81.200/recognize">农田识别</a>
+        </li>
+        <li>
+            <a href="http://122.9.81.200/login">登录</a>
+        </li>
+        <li>
+            <a href="http://122.9.81.200/contact">联系我们</a>
+        </li>
+    </ul>
+    </header>
+  <div class="box">
+     <h2>Login</h2>
+ <form class="form-box">
+    <div class="inputBox">
+        <input type="text" name="" required="">
+        <label>Username</label>
+    </div>
+    <div class="inputBox">
+        <input type="password" name="" required="">
+        <label>Password</label>
+    </div>
+    <input type="submit" name="" value="提交">
+
+ </form>
+  </div>
+
+
+
+
+
+
+    <footer style="width: 1000px;text-align: center; margin-top: 700px; margin-left: 450px;font-size: 18px;">
+        <br>
+        <br>
+        <br>
+    </footer>
+<script type="text/javascript">
+    $("#file0").change(function(){
+        var objUrl = getObjectURL(this.files[0]) ;//获取文件信息
+        console.log("objUrl = "+objUrl);
+        if (objUrl) {
+            $("#img0").attr("src", objUrl);
+        }
+    });
+
+    function test() {
+        var fileobj = $("#file0")[0].files[0];
+        console.log(fileobj);
+        var form = new FormData();
+        form.append("file", fileobj);
+        var out='';
+        var flower='';
+        $.ajax({
+            type: 'POST',
+            url: "predict2",
+            data: form,
+            async: false,       //同步执行
+            processData: false, // 告诉jquery要传输data对象
+            contentType: false, //告诉jquery不需要增加请求头对于contentType的设置
+            success: function (arg) {
+            console.log(arg)
+            out = arg.result;
+        },error:function(){
+                console.log("后台处理错误");
+            }
+    });
+
+        out.forEach(e=>{
+            flower+=`<div style="border-bottom: 1px solid #CCCCCC;line-height: 60px;font-size:16px;">${e}</div>`
+        });
+
+        document.getElementById("out").innerHTML=flower;
+
+    }
+
+    function getObjectURL(file) {
+        var url = null;
+        if(window.createObjectURL!=undefined) {
+            url = window.createObjectURL(file) ;
+        }else if (window.URL!=undefined) { // mozilla(firefox)
+            url = window.URL.createObjectURL(file) ;
+        }else if (window.webkitURL!=undefined) { // webkit or chrome
+            url = window.webkitURL.createObjectURL(file) ;
+        }
+        return url ;
+    }
+</script>
+<style>
+    .file {
+        position: relative;
+        /*display: inline-block;*/
+        background: #CCC ;
+        border: 1px solid #CCC;
+        padding: 4px 4px;
+        overflow: hidden;
+        text-decoration: none;
+        text-indent: 0;
+        width:100px;
+        height:30px;
+        line-height: 30px;
+        border-radius: 5px;
+        color: #333;
+        font-size: 13px;
+
+    }
+    .file input {
+        position: absolute;
+        font-size: 13px;
+        right: 0;
+        top: 0;
+        opacity: 0;
+        border: 1px solid #333;
+        padding: 4px 4px;
+        overflow: hidden;
+        text-indent: 0;
+        width:100px;
+        height:30px;
+        line-height: 30px;
+        border-radius: 5px;
+        color: #FFFFFF;
+
+    }
+    #b0{
+        background: #1899FF;
+        border: 1px solid #CCC;
+        padding: 4px 10px;
+        overflow: hidden;
+        text-indent: 0;
+        width:60px;
+        height:28px;
+        line-height: 20px;
+        border-radius: 5px;
+        color: #FFFFFF;
+        font-size: 13px;
+    }
+</style>
+</body>
+</html>
+
+
